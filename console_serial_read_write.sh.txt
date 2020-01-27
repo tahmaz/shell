@@ -1,0 +1,36 @@
+unix serial read, write
+for write
+echo "hi" > /dev/console
+for read
+while(cat < /dev/console &)
+
+//ashagidaki test edilmeyib
+
+while read -r line < /dev/ttyS2; do
+  # $line is the line read, do something with it
+  echo $result > /dev/ttyS2
+done
+
+---------------------------
+read write with stty tool:
+
+After running stty -a -F /dev/ttyS1, there were 3 options I found to contribute to the problem: "echo", "onlcr", and "icrnl".
+
+Since this serial port is looped back to itself, here is what happened after running echo "hi" > /dev/ttyS1:
+
+The echo command appends a newline to the end of the message by default, so "hi" + LF is sent out to /dev/ttyS1
+Because "onlcr" was set, the serial device converted the LF to CRLF so the physical message sent out the Tx line was "hi" + CRLF
+Because "icrnl" was set, the physical messaged received on the Rx line converted the CR to LF. So the message outputted by 'cat' was "hi" + LFLF.
+Because "echo" was set, the message received on the Rx ("hi" + LFLF), was then sent back out on the Tx line.
+Because of onlcr, "hi" + LFLF became "hi" + CRLFCRLF.
+Because of icrnl, "hi" + CRLFCRLF became "hi" + LFLFLFLF
+Because of echo, "hi" + LFLFLFLF was then sent out the Tx
+And so on...
+
+In order to fix this problem, I ran the following command:
+
+stty -F /dev/ttyS1 -echo -onlcr
+
+Disabling "echo" prevents an infinite loop of messages and disabling "onlcr" prevents the serial device from converting LF to CRLF on output. Now cat receives one "hi" (with a single newline!) for each time I run echo.
+
+CR = carriage return (ASCII 0x0D); LF = line feed or newline (ASCII 0x0A)

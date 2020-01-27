@@ -1,0 +1,22 @@
+----extrac-------
+---tar file(red hat)
+tar xvf syslog-v1.22-2.tar syslog
+---tgz file(red hat)
+gzip -d < settings-v0.7-1.tgz | tar xvf -
+
+----------------------
+//tar for linux
+tar -zcvpf voip.tar.gz voip.cap
+//for solaris
+tar -cvf alarms.tar sql_result ; gzip alarms.tar
+----------------------
+//untar for linux
+tar -xcvpf voip.tar.gz
+or
+tar -xvpf voip.tar.gz
+//for solaris
+gunzip file.tgz
+tar -xvf file.tar
+--------------------
+//show in tar file(witout untar)
+tar -ztvf sapc_00001.tar.gz

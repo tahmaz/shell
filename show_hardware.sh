@@ -1,0 +1,1 @@
+dmidecode -t 1 | egrep -i "serial|product"

@@ -1,0 +1,5 @@
+$ echo Hi | openssl enc -aes-128-cbc -a -salt -pass pass:wtf
+U2FsdGVkX18qAdhqop1SffsewHue6EOPNKv9dXc/0rI=
+$ echo U2FsdGVkX18qAdhqop1SffsewHue6EOPNKv9dXc/0rI= | openssl enc -aes-128-cbc -a -d -salt -pass pass:wtf
+Hi
+$

@@ -1,0 +1,2 @@
+XSCF> setdomainmode -d 0 -m autoboot=on
+XSCF> showdomainmode -d 0

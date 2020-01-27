@@ -1,0 +1,22 @@
+List of Solaris commands for process management
+
+apptrace - for tracing library calls
+dtrace - debugger, new in version 10
+pargs - get list of arguments and environment variables with which process was started
+pfiles - list of file descriptors, associated with process
+pgrep - get the PIDs of processes by name i.e. Something like ps -efl|grep -v grep|grep process_name
+pkill - send signal to process. For example pkill -9 init :-P
+pldd - list dynamic libraries, associated with process, similar to ldd for executable
+plockstat - see list of locked by process files. Lock can be mutex i.e. exclusive and reader/writer for shared access
+pmap - get memory map (segments) of process
+preap - try to kick-off zombie process
+prstat - fullscreen view of processes sorted by different criteria, similar to Linux top command
+prun - continue hold with pstop process
+ps - print process information and status. In Solaris exist SYSV and BSD variants, respectively /usr/bin/ps and /usr/ucb/ps
+psig - list signals that can be handled by process
+pstack - get backtrace stack of process for debugging purposes
+pstop - temporary hold process
+ptree - print the tree of processes
+pwait - wait till process finish
+pwdx - list working directory for process, like pwd command
+truss - for tracing user/library/system calls and signals

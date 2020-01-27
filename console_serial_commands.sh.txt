@@ -1,0 +1,11 @@
+The old kernel's "echo" commands:
+stty -F /dev/ttyUSB0 9600
+echo $'\xff\x01\x01' > ttyUSB0 // the relay 1 go ON.
+stty -F /dev/ttyUSB0 9600
+echo $'\xff\x01\x00' > ttyUSB0 // the relay 1 go OFF.
+---------------------------------
+The new kernel's "echo" commands:
+stty -F /dev/ttyUSB0 9600
+echo -e '\xff\x01\x01' > /dev/ttyUSB0 // the relay 1 go ON.
+stty -F /dev/ttyUSB0 9600
+echo -e '\xff\x01\x00' > /dev/ttyUSB0 // the relay 1 go OFF.

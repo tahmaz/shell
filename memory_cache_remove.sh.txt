@@ -1,0 +1,32 @@
+---To free pagecache
+echo 1 > /proc/sys/vm/drop_caches
+---To free dentries and inodes
+echo 2 > /proc/sys/vm/drop_caches
+---To free pagecache, dentries and inodes:
+echo 3 > /proc/sys/vm/drop_caches
+
+-------------------------------------------
+[root@cacti bin]# free -m
+             total       used       free     shared    buffers     cached
+Mem:          3828       2944        884          0        162       1895
+-/+ buffers/cache:        886       2941
+Swap:         3967          0       3967
+[root@cacti bin]# echo 1 > /proc/sys/vm/drop_caches
+[root@cacti bin]# free -m
+             total       used       free     shared    buffers     cached
+Mem:          3828        891       2936          0          0         75
+-/+ buffers/cache:        815       3013
+Swap:         3967          0       3967
+[root@cacti bin]# 
+[root@cacti bin]# echo 2 > /proc/sys/vm/drop_caches
+[root@cacti bin]# free -m
+             total       used       free     shared    buffers     cached
+Mem:          3828        746       3081          0          2         84
+-/+ buffers/cache:        658       3169
+Swap:         3967          0       3967
+[root@cacti bin]# echo 3 > /proc/sys/vm/drop_caches
+[root@cacti bin]# free -m
+             total       used       free     shared    buffers     cached
+Mem:          3828        723       3104          0          3         61
+-/+ buffers/cache:        657       3170
+Swap:         3967          0       3967

@@ -1,0 +1,98 @@
+CentOS_7 install MongoDB
+------------------------
+vi /etc/yum.repos.d/mongodb-org-3.2.repo
+[MongoDB]
+name=MongoDB Repository
+baseurl=http://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/3.2/x86_64/
+gpgcheck=0
+enabled=1
+
+sudo yum install -y mongodb-org
+mongodb-org-3.2.8-1.el7.x86_64 FAILED                                          
+
+yum install http://repo.mongodb.org/yum/redhat/7Server/mongodb-org/stable/x86_64/RPMS/mongodb-org-3.2.8-1.el7.x86_64.rpm http://repo.mongodb.org/yum/redhat/7Server/mongodb-org/stable/x86_64/RPMS/mongodb-org-mongos-3.2.8-1.el7.x86_64.rpm http://repo.mongodb.org/yum/redhat/7Server/mongodb-org/stable/x86_64/RPMS/mongodb-org-server-3.2.8-1.el7.x86_64.rpm http://repo.mongodb.org/yum/redhat/7Server/mongodb-org/stable/x86_64/RPMS/mongodb-org-shell-3.2.8-1.el7.x86_64.rpm http://repo.mongodb.org/yum/redhat/7Server/mongodb-org/stable/x86_64/RPMS/mongodb-org-tools-3.2.8-1.el7.x86_64.rpm
+
+mkdir /data
+mkdir /data/db
+
+/etc/init.d/mongod restart
+chkconfig mongod on
+
+//mongodb default port 27017
+
+=========================================================
+WARNING: /sys/kernel/mm/transparent_hugepage/enabled is 'always'.
+WARNING: /sys/kernel/mm/transparent_hugepage/defrag is 'always'.
+---
+vi /etc/init.d/disable-transparent-hugepages
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          disable-transparent-hugepages
+# Required-Start:    $local_fs
+# Required-Stop:
+# X-Start-Before:    mongod mongodb-mms-automation-agent
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Disable Linux transparent huge pages
+# Description:       Disable Linux transparent huge pages, to improve
+#                    database performance.
+### END INIT INFO
+
+case $1 in
+  start)
+    if [ -d /sys/kernel/mm/transparent_hugepage ]; then
+      thp_path=/sys/kernel/mm/transparent_hugepage
+    elif [ -d /sys/kernel/mm/redhat_transparent_hugepage ]; then
+      thp_path=/sys/kernel/mm/redhat_transparent_hugepage
+    else
+      return 0
+    fi
+
+    echo 'never' > ${thp_path}/enabled
+    echo 'never' > ${thp_path}/defrag
+
+    unset thp_path
+    ;;
+esac
+
+sudo chmod 755 /etc/init.d/disable-transparent-hugepages
+sudo chkconfig --add disable-transparent-hugepages
+
+sudo mkdir /etc/tuned/no-thp
+vi /etc/tuned/no-thp/tuned.conf
+[main]
+include=virtual-guest
+
+[vm]
+transparent_hugepages=never
+
+
+sudo tuned-adm profile no-thp
+
+//test
+cat /sys/kernel/mm/transparent_hugepage/enabled
+
+//result
+always madvise [never]
+
+==========================================================================
+** WARNING: soft rlimits too low. rlimits set to 4096 processes, 64000 files. Number of processes should be at least 32000 : 0.5 times number of files.
+---
+//list limits
+ulimit -a
+---Recommended ulimit Settings---
+-f (file size): unlimited
+-t (cpu time): unlimited
+-v (virtual memory): unlimited [1]
+-n (open files): 64000
+-m (memory size): unlimited [1] [2]
+-u (processes/threads): 64000
+
+//set limit -u (processes/threads)
+ulimit -u 64000
+
+vi  /etc/security/limits.d/99-mongodb-nproc.conf
+mongod     soft    nproc     64000
+
+service mongod restart
+=========================================================================

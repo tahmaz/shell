@@ -1,0 +1,4 @@
+#UNIX SNOOP, TCP DUMP:
+snoop -x0 -o /tmp/hlr4.pcap 172.17.3.29
+#tcpdump for solaris
+tcpdump  -i eth1 -s 0  -w /voip.cap

@@ -1,0 +1,1 @@
+tr -d '\15' < infutfile > outputfile
